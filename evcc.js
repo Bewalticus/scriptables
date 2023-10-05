@@ -4,25 +4,45 @@
 // This script shows a random Scriptable API in a widget. The script is meant to be used with a widget configured on the Home Screen.
 // You can run the script in the app to preview the widget or you can go to the Home Screen, add a new Scriptable widget and configure the widget to run this script.
 // You can also try creating a shortcut that runs this script. Running the shortcut will show widget.
-let evcc = await evccValues();
-let widget = await createWidget(evcc);
+let url = args.widgetParameter;
+let size = config.widgetFamily;
+if (!config.runsInWidget) {
+  url = "http://evcc";
+  size = 'small';
+}
+let evcc = await evccValues(url);
+let widget = await createWidget(evcc, url, size);
 if (config.runsInWidget) {
-
   // The script runs inside a widget, so we pass our instance of ListWidget to be shown inside the widget on the Home Screen.
   Script.setWidget(widget);
 } else {
-
   // The script runs inside the app, so we preview the widget.
-  widget.presentMedium();
+  switch (size) {
+    case 'small':
+      widget.presentSmall();
+      break;
+    case 'medium':
+      widget.presentMedium();
+      break;
+  }
 }
 // Calling Script.complete() signals to Scriptable that the script have finished running.
 // This can speed up the execution, in particular when running the script from Shortcuts or using Siri.
 Script.complete();
 
-async function createWidget(evcc) {
-  let appIcon = await loadAppIcon();
+async function createWidget(evcc, url, size) {
+  switch (size) {
+    case 'medium':
+      return await createMediumWidget(evcc, url);
+    case 'small':
+      return await createSmallWidget(evcc, url);
+  }
+}
+
+async function createWidgetHeader(evcc, url, compact) {
+  let appIcon = await loadAppIcon(url);
   let widget = new ListWidget();
-  widget.url = args.widgetParameter;
+  widget.url = url;
   // Add background gradient
   let gradient = new LinearGradient();
   gradient.locations = [0, 1];
@@ -39,7 +59,8 @@ async function createWidget(evcc) {
   appIconElement.imageSize = new Size(15, 15);
   appIconElement.cornerRadius = 4;
   titleStack.addSpacer(4);
-  let titleElement = titleStack.addText(evcc.siteTitle + " | evcc");
+  let title = compact ? evcc.siteTitle : (evcc.siteTitle + " | evcc");
+  let titleElement = titleStack.addText(title);
   titleElement.textColor = Color.white();
   titleElement.textOpacity = 0.7;
   titleElement.font = Font.mediumSystemFont(13);
@@ -50,6 +71,35 @@ async function createWidget(evcc) {
   time.font = Font.mediumSystemFont(13);
   widget.addSpacer(12);
 
+  return widget;
+}
+
+async function createSmallWidget(evcc, url) {
+  let widget = await createWidgetHeader(evcc, url, true);
+
+  let houseStack = widget.addStack();
+  let houseIcon = SFSymbol.named("house.fill");
+  let house = houseStack.addImage(houseIcon.image);
+  house.imageSize = new Size(40, 40);
+  houseStack.addSpacer();
+  let houseText = houseStack.addText(evcc.batterySoc.toString() + "%");
+  colorText(houseText, ~~evcc.batteryPower);
+  houseText.font = Font.mediumSystemFont(32);
+
+  let carStack = widget.addStack();
+  let carIcon = SFSymbol.named("car.fill");
+  let car = carStack.addImage(carIcon.image);
+  car.imageSize = new Size(40, 40);
+  carStack.addSpacer();
+  let carText = carStack.addText(evcc.vehicleSoc.toString() + "%");
+  colorText(carText, -~~evcc.chargePower);
+  carText.font = Font.mediumSystemFont(32);
+
+  return widget;
+}
+
+async function createMediumWidget(evcc, url) {
+  let widget = await createWidgetHeader(evcc, url, false);
   // Show house values PV and grid
   let pvStack = widget.addStack();
   let houseIcon = SFSymbol.named("house.fill");
@@ -153,8 +203,8 @@ function formatWatts(watts) {
   }
 }
 
-async function evccValues() {
-  let api = await loadFromApi();
+async function evccValues(url) {
+  let api = await loadFromApi(url);
   let evcc = api["result"];
   let loadpoint = evcc["loadpoints"][0];
   return {
@@ -172,14 +222,14 @@ async function evccValues() {
   };
 }
 
-async function loadFromApi() {
-  let url = args.widgetParameter + "/api/state";
-  let req = new Request(url);
+async function loadFromApi(url) {
+  let fullUrl = url + "/api/state";
+  let req = new Request(fullUrl);
   return await req.loadJSON();
 }
 
-async function loadAppIcon() {
-  let url = args.widgetParameter + "/meta/favicon.ico";
-  let req = new Request(url);
+async function loadAppIcon(url) {
+  let fullUrl = url + "/meta/favicon.ico";
+  let req = new Request(fullUrl);
   return req.loadImage();
 }
