@@ -80,18 +80,20 @@ async function createSmallWidget(evcc, url) {
   let houseStack = widget.addStack();
   let houseIcon = SFSymbol.named("house.fill");
   let house = houseStack.addImage(houseIcon.image);
-  house.imageSize = new Size(40, 40);
+  house.imageSize = new Size(38, 38);
   let houseText = houseStack.addText((~~evcc.batterySoc).toString() + "%");
   colorText(houseText, ~~evcc.batteryPower);
-  houseText.font = Font.mediumSystemFont(32);
+  houseText.font = Font.mediumSystemFont(30);
+
+  widget.addSpacer(2);
 
   let carStack = widget.addStack();
   let carIcon = SFSymbol.named("car.fill");
   let car = carStack.addImage(carIcon.image);
-  car.imageSize = new Size(40, 40);
+  car.imageSize = new Size(38, 38);
   let carText = carStack.addText((~~evcc.vehicleSoc).toString() + "%");
   colorText(carText, -~~evcc.chargePower);
-  carText.font = Font.mediumSystemFont(32);
+  carText.font = Font.mediumSystemFont(30);
 
   return widget;
 }
