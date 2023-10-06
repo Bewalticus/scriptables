@@ -59,7 +59,7 @@ async function createWidgetHeader(evcc, url, compact) {
   appIconElement.imageSize = new Size(15, 15);
   appIconElement.cornerRadius = 4;
   titleStack.addSpacer(4);
-  let title = compact ? evcc.siteTitle : (evcc.siteTitle + " | evcc");
+  let title = compact ? "evcc" : (evcc.siteTitle + " | evcc");
   let titleElement = titleStack.addText(title);
   titleElement.textColor = Color.white();
   titleElement.textOpacity = 0.7;
@@ -81,8 +81,8 @@ async function createSmallWidget(evcc, url) {
   let houseIcon = SFSymbol.named("house.fill");
   let house = houseStack.addImage(houseIcon.image);
   house.imageSize = new Size(40, 40);
-  houseStack.addSpacer();
-  let houseText = houseStack.addText(evcc.batterySoc.toString() + "%");
+  houseStack.addSpacer(5);
+  let houseText = houseStack.addText((~~evcc.batterySoc).toString() + "%");
   colorText(houseText, ~~evcc.batteryPower);
   houseText.font = Font.mediumSystemFont(32);
 
@@ -90,8 +90,8 @@ async function createSmallWidget(evcc, url) {
   let carIcon = SFSymbol.named("car.fill");
   let car = carStack.addImage(carIcon.image);
   car.imageSize = new Size(40, 40);
-  carStack.addSpacer();
-  let carText = carStack.addText(evcc.vehicleSoc.toString() + "%");
+  carStack.addSpacer(5);
+  let carText = carStack.addText((~~evcc.vehicleSoc).toString() + "%");
   colorText(carText, -~~evcc.chargePower);
   carText.font = Font.mediumSystemFont(32);
 
@@ -147,7 +147,7 @@ async function createMediumWidget(evcc, url) {
   let carBattery = carChargeStack.addImage(carBatteryIcon.image);
   carBattery.imageSize = new Size(24, 24);
   carChargeStack.addSpacer(2);
-  carChargeStack.addText(evcc.vehicleSoc.toString() + "%•").textColor = Color.white();
+  carChargeStack.addText((~~evcc.vehicleSoc).toString() + "%•").textColor = Color.white();
   let carPower = carChargeStack.addImage(powerIcon.image);
   carPower.imageSize = new Size(24, 24);
   carChargeStack.addSpacer(2);
