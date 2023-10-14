@@ -86,14 +86,23 @@ async function createSmallWidget(mpmd, url) {
 }
 
 async function mpmdValues(url) {
-  let api = await loadFromApi(url);
-  let status = api.charAt(api.length - 1);
-  return {
-    nozzleTemp: api.match(/\d+/g)[0],
-    bedTemp: api.match(/\d+/g)[0],
-    status: status == 'P' ? 'Printing' : 'Idle',
-    progress: status == 'P' ? api.match(/\d+/g)[4] : '0'
-  };
+  try {
+    let api = await loadFromApi(url);
+    let status = api.charAt(api.length - 1);
+    return {
+      nozzleTemp: api.match(/\d+/g)[0],
+      bedTemp: api.match(/\d+/g)[0],
+      status: status == 'P' ? 'Printing' : 'Idle',
+      progress: status == 'P' ? api.match(/\d+/g)[4] : '0'
+    };
+  } catch (e) {
+    return {
+      nozzleTemp: '0',
+      bedTemp: '0',
+      status: 'Offline',
+      progress: '0'
+    };
+  }
 }
 
 async function loadFromApi(url) {
