@@ -83,7 +83,11 @@ async function createSmallWidget(evcc, url) {
   house.imageSize = new Size(38, 38);
   let houseText = houseStack.addText((~~evcc.batterySoc).toString() + "%");
   colorText(houseText, ~~evcc.batteryPower);
-  houseText.font = Font.mediumSystemFont(30);
+  if (~~evcc.batterySoc == 100) {
+    houseText.font = Font.mediumSystemFont(20);
+  } else {
+    houseText.font = Font.mediumSystemFont(30);
+  }
 
   widget.addSpacer(2);
 
@@ -93,7 +97,11 @@ async function createSmallWidget(evcc, url) {
   car.imageSize = new Size(38, 38);
   let carText = carStack.addText((~~evcc.vehicleSoc).toString() + "%");
   colorText(carText, -~~evcc.chargePower);
-  carText.font = Font.mediumSystemFont(30);
+  if (~~evcc.vehicleSoc == 100) {
+    carText.font = Font.mediumSystemFont(20);
+  } else {
+    carText.font = Font.mediumSystemFont(30);
+  }
 
   return widget;
 }
