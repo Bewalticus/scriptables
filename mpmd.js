@@ -7,7 +7,7 @@
 let url = args.widgetParameter;
 let size = config.widgetFamily;
 if (!config.runsInWidget) {
-  url = "http://192.168.178.54";
+  url = "http://mpmd";
   size = 'small';
 }
 let mpmd = await mpmdValues(url);
@@ -92,7 +92,7 @@ async function mpmdValues(url) {
     nozzleTemp: api.match(/\d+/g)[0],
     bedTemp: api.match(/\d+/g)[0],
     status: status == 'P' ? 'Printing' : 'Idle',
-    progress: status == 'P' ? api.match(/\d+/g) : '0'
+    progress: status == 'P' ? api.match(/\d+/g)[4] : '0'
   };
 }
 
