@@ -99,6 +99,6 @@ async function mpmdValues(url) {
 async function loadFromApi(url) {
   let fullUrl = url + "/inquiry";
   let req = new Request(fullUrl);
-  return await req.text();
+  return await req.loadString();
 }
 
