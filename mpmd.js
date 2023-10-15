@@ -7,7 +7,7 @@
 let url = args.widgetParameter;
 let size = config.widgetFamily;
 if (!config.runsInWidget) {
-  url = "http://mpmd";
+  url = "http://mp-mini-delta";
   size = 'small';
 }
 let mpmd = await mpmdValues(url);
@@ -108,6 +108,7 @@ async function mpmdValues(url) {
 async function loadFromApi(url) {
   let fullUrl = url + "/inquiry";
   let req = new Request(fullUrl);
+  req.timeoutInterval = 3
   return await req.loadString();
 }
 
