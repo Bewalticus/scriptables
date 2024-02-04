@@ -216,7 +216,7 @@ async function evccValues(url) {
   let evcc = api["result"];
   let loadpoint = evcc["loadpoints"][0];
   let vehicleName = loadpoint["vehicleName"];
-  let vehicleTitle = evcc["vehicles"][vehicleName];
+  let vehicleTitle = evcc["vehicles"][vehicleName]["title"];
   return {
     batterySoc: evcc["batterySoc"],
     batteryPower: evcc["batteryPower"],
